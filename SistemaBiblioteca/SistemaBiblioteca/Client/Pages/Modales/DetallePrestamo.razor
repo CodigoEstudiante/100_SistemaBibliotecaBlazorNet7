@@ -1,0 +1,75 @@
+﻿@inject IPrestamoServicio _prestamoServicio;
+@inject ISnackbar _snackBar
+
+<MudDialog DisableSidePadding="true" Style="width:400px">
+
+
+    <DialogContent>
+        <MudDivider />
+        <MudContainer>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Estado Entregado" Variant="Variant.Outlined" Text="@_prestamo.EstadoEntregado" Lines="3" ReadOnly="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Estado Recibido" Variant="Variant.Outlined" @bind-Value="@estadoRecibido" Lines="3" ReadOnly=@justRead />
+
+                </MudItem>
+            </MudGrid>
+
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Registrar" Disabled=@disableButon>Registrar Devolución</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Volver">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    private string estadoRecibido = "";
+    private bool disableButon = false;
+    private bool justRead = false;
+
+    [Parameter]
+    public PrestamoDTO _prestamo { get; set; } = new PrestamoDTO();
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        estadoRecibido = _prestamo.EstadoRecibido == null ? "" : _prestamo.EstadoRecibido;
+
+        if (_prestamo.IdEstadoPrestamo != 1)
+        {
+            disableButon = true;
+            justRead = true;
+
+        }
+    }
+
+
+
+    private void Volver()
+    {
+        MudDialog.Cancel();
+    }
+
+    private async Task Registrar()
+    {
+
+        _prestamo.IdEstadoPrestamo = 2;
+        _prestamo.EstadoRecibido = estadoRecibido;
+        _prestamo.FechaConfirmacionDevolucion = DateTime.Today;
+
+        var response = await _prestamoServicio.Editar(_prestamo);
+        if (response)
+        {
+            _snackBar.Add("El libro fue devuelto", Severity.Success, a => a.VisibleStateDuration = 1000);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+            _snackBar.Add("Error al guardar cambios", Severity.Error, a => a.VisibleStateDuration = 1000);
+    }
+}

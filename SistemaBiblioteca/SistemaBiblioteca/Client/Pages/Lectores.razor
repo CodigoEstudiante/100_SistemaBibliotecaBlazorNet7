@@ -1,0 +1,142 @@
+﻿@page "/pages/lectores"
+@inject MenuService _menuServicio;
+
+
+
+@inject ILectorServicio _lectorServicio
+@inject IDialogService _dialogServicio
+@inject ISnackbar _snackBar
+@inject SweetAlertService Swal;
+@inject NavigationManager _navigationServicio;
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
+
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Color="Color.Primary"
+                           OnClick="@(() => _navigationServicio.NavigateTo("/pages/lector"))">
+                    Nuevo Lector
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12">
+
+                <MudTable Items="@listaLectores"
+                Dense="true"
+                Striped="true" Bordered="true"
+                Filter="new Func<LectorDTO,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1"
+                Loading="@_loading" LoadingProgressColor="Color.Info">
+                <ToolBarContent>
+                <MudSpacer />
+                <MudTextField @bind-Value="searchString1" Placeholder="Buscar" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <HeaderContent>
+                <MudTh>Codigo</MudTh>
+                <MudTh>Nombre</MudTh>
+                <MudTh>Apellido</MudTh>
+                <MudTh>Correo</MudTh>
+                <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate Context="lectorRow">
+                        <MudTd DataLabel="Codigo">@lectorRow.Codigo</MudTd>
+                        <MudTd DataLabel="Nombre">@lectorRow.Nombre</MudTd>
+                        <MudTd DataLabel="Apellido">@lectorRow.Apellido</MudTd>
+                        <MudTd DataLabel="Correo">@lectorRow.Correo</MudTd>
+                    <MudTd DataLabel="">
+
+                        <MudFab Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.Edit"
+                                    Size="Size.Small" Href="@("/pages/lector/" + lectorRow.IdLector)"
+                            IconSize="Size.Small" />
+
+                        <MudFab Color="Color.Error"
+                            StartIcon="@Icons.Material.Filled.Delete"
+                            Size="Size.Small"
+                            IconSize="Size.Small"
+                            OnClick="@(() => EliminarLector(lectorRow))" />
+                        </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                <MudTablePager />
+                </PagerContent>
+                </MudTable>
+                
+
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+</MudContainer>
+
+@code {
+    List<LectorDTO> listaLectores = new List<LectorDTO>();
+    private string searchString1 = "";
+    private LectorDTO selectedItem1 = null;
+    private bool _loading = true;
+
+    private async Task ObtenerLectores()
+    {
+        var result = await _lectorServicio.Lista();
+
+        if (result.status)
+        {
+            listaLectores = (List<LectorDTO>)result.value!;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Lectores", href: null));
+        await ObtenerLectores();
+        _loading = false;
+    }
+
+    private bool FilterFunc1(LectorDTO element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(LectorDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Codigo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Nombre.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Apellido.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Correo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+
+
+
+    private async Task EliminarLector(LectorDTO lector)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro?",
+                Text = $"Eliminar lector: {lector.Nombre}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, eliminar",
+                CancelButtonText = "No, volver"
+            });
+
+        if (result.IsConfirmed)
+        {
+            var resultado = await _lectorServicio.Eliminar(lector.IdLector);
+
+            if (resultado)
+            {
+                _snackBar.Add("El lector fue eliminado", Severity.Success, a => a.VisibleStateDuration = 600);
+                await ObtenerLectores();
+            }
+            else
+                _snackBar.Add("No se pudo eliminar", Severity.Error, a => a.VisibleStateDuration = 500);
+        }
+    }
+
+}

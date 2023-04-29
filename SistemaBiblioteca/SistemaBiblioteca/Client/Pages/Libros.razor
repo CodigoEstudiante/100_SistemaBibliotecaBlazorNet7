@@ -1,0 +1,150 @@
+﻿@page "/pages/libros"
+@inject MenuService _menuServicio;
+
+
+
+@inject ILibroServicio _libroServicio
+@inject IDialogService _dialogServicio
+@inject ISnackbar _snackBar
+@inject SweetAlertService Swal;
+@inject NavigationManager _navigationServicio;
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
+
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Color="Color.Primary"
+                           OnClick="@(() => _navigationServicio.NavigateTo("/pages/libro"))">
+                    Nuevo Libro
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12">
+
+                <MudTable Items="@listaLibros"
+                          Dense="true"
+                          Striped="true" Bordered="true"
+                          Filter="new Func<LibroDTO,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1"
+                          Loading="@_loading" LoadingProgressColor="Color.Info">
+                    <ToolBarContent>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="searchString1" Placeholder="Buscar" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTh>Portada</MudTh>
+                        <MudTh>Titulo</MudTh>
+                        <MudTh>Autor</MudTh>
+                        <MudTh>Categoria</MudTh>
+                        <MudTh>Editorial</MudTh>
+                        <MudTh>Ubicacion</MudTh>
+                        <MudTh>Ejemplares</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="libroRow">
+                        <MudTd DataLabel="Titulo">
+                            <MudImage Src="@("data:image/png;base64," + Convert.ToBase64String(libroRow.Portada))" 
+                            Alt="@libroRow.Titulo" Elevation="25" Class="rounded-lg" Width="80" Height="100" />
+                        </MudTd>
+                        <MudTd DataLabel="Titulo">@libroRow.Titulo</MudTd>
+                        <MudTd DataLabel="Autor">@libroRow.Autor</MudTd>
+                        <MudTd DataLabel="Categoria">@libroRow.IdCategoriaNavigation.Descripcion</MudTd>
+                        <MudTd DataLabel="Editorial">@libroRow.Editorial</MudTd>
+                        <MudTd DataLabel="Ubicacion">@libroRow.Ubicacion</MudTd>
+                        <MudTd DataLabel="Ejemplares">@libroRow.Ejemplares</MudTd>
+                        <MudTd DataLabel="">
+
+                            <MudFab Color="Color.Primary"
+                                    StartIcon="@Icons.Material.Filled.Edit"
+                                    Size="Size.Small" Href="@("/pages/libro/" + libroRow.IdLibro)"
+                                    IconSize="Size.Small" />
+
+                            <MudFab Color="Color.Error"
+                                    StartIcon="@Icons.Material.Filled.Delete"
+                                    Size="Size.Small"
+                                    IconSize="Size.Small"
+                                    OnClick="@(() => EliminarLibro(libroRow))" />
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+
+
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+</MudContainer>
+
+
+@code {
+
+    List<LibroDTO> listaLibros = new List<LibroDTO>();
+    private string searchString1 = "";
+    private LibroDTO selectedItem1 = null;
+    private bool _loading = true;
+
+    private async Task ObtenerLibros()
+    {
+        var result = await _libroServicio.Lista();
+
+        if (result.status)
+        {
+            listaLibros = (List<LibroDTO>)result.value!;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Libros", href: null));
+        await ObtenerLibros();
+        _loading = false;
+    }
+    private bool FilterFunc1(LibroDTO element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(LibroDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Titulo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Autor.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.IdCategoriaNavigation.Descripcion.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Editorial.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Ubicacion.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+
+    private async Task EliminarLibro(LibroDTO libro)
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Esta seguro?",
+                Text = $"Eliminar libro: {libro.Titulo}",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Si, eliminar",
+                CancelButtonText = "No, volver"
+            });
+
+        if (result.IsConfirmed)
+        {
+            var resultado = await _libroServicio.Eliminar(libro.IdLibro);
+
+            if (resultado)
+            {
+                _snackBar.Add("El libro fue eliminado", Severity.Success, a => a.VisibleStateDuration = 600);
+                await ObtenerLibros();
+            }
+            else
+                _snackBar.Add("No se pudo eliminar", Severity.Error, a => a.VisibleStateDuration = 600);
+        }
+    }
+}

@@ -1,0 +1,77 @@
+﻿@inject ILibroServicio _libroServicio;
+<MudDialog DisableSidePadding="true" Style="width:500px">
+
+    <TitleContent>
+        <div class="d-flex gap-2">
+            <MudTextField @bind-Value="TextValue" Label="Buscar libro" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+
+            <MudIconButton Icon="@Icons.Material.Filled.Search"
+            Variant="Variant.Filled" Color="Color.Info" OnClick="Buscar"
+            Size="Size.Medium" />
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <MudDivider />
+        <MudContainer Style="max-height: 300px; overflow-y: scroll">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="@mostrarLoad" />
+            <MudList Clickable="true">
+                @foreach (var item in listaLibros)
+                {
+                    <MudListItem OnClick="@(() => Seleccionar(item))">
+
+                        <MudStack Row="true">
+                            <MudImage Width="90" Height="90" Alt="img" Src="@("data:image/png;base64," + Convert.ToBase64String(item.Portada))"></MudImage>
+                            <MudStack Justify="Justify.Center" Spacing="0">
+                                <MudText Typo="Typo.body1" Color="Color.Primary">@item.Titulo</MudText>
+                                <MudText Align="Align.Left"><b>Autor: </b> @item.Autor</MudText>
+                                <MudText Align="Align.Left"><b>Categoria: </b> @item.IdCategoriaNavigation.Descripcion</MudText>
+                                <MudText Align="Align.Left"><b>Editorial: </b> @item.Editorial</MudText>
+                            </MudStack>
+                        </MudStack>
+                    </MudListItem>
+                }
+
+            </MudList>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Volver">Volver</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    string TextValue = "";
+    List<LibroDTO> listaLibros = new List<LibroDTO>();
+    string mostrarLoad { get; set; } = "d-none";
+    private void Volver()
+    {
+        MudDialog.Cancel();
+    }
+    private async Task Buscar()
+    {
+        mostrarLoad = "d-block";
+        if(TextValue == "")
+            listaLibros = new List<LibroDTO>();
+        else
+        {
+            var response = await _libroServicio.Buscar(TextValue);
+
+            if (response.status)
+            {
+
+                listaLibros = (List<LibroDTO>)response.value!;
+            }
+
+        }
+        mostrarLoad = "d-none";
+
+    }
+
+    private async Task Seleccionar(LibroDTO item)
+    {
+        MudDialog.Close(DialogResult.Ok(item));
+    }
+}

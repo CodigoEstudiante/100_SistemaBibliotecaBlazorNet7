@@ -1,0 +1,34 @@
+
+use DBBibliotecaBlazor
+
+go
+
+INSERT INTO EstadoPrestamo(IdEstadoPrestamo,Descripcion) VALUES
+(1,'Pendiente'),
+(2,'Devuelto')
+
+go
+
+--INSERTAR USUARIOS
+insert into usuario(nombreApellidos,correo,Clave,esActivo) values
+('jose smith','admin@example.com','12345',1)
+
+go
+
+insert into NumeroCorrelativo(prefijo,tipo,ultimonumero) values
+('LT','Lector',0),
+('PR','Prestamo',0)
+
+go
+
+insert into Categoria(Descripcion,Estado) values
+('Quimica',1),
+('Psicologia',1),
+('Historia Geografia',1),
+('Novela',1),
+('Ciencia',1),
+('Biografias',1),
+('Novela Gotica',1),
+('Poema',1),
+('Ciencia Ficcion',1),
+('Fantasia',1)

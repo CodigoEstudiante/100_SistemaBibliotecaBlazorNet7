@@ -1,0 +1,167 @@
+﻿@page "/pages/libro"
+@page "/pages/libro/{idLibro:int}"
+@inject MenuService _menuServicio;
+
+@inject ICategoriaServicio _categoriaServicio;
+@inject ILibroServicio _libroServicio;
+@inject SweetAlertService Swal;
+@inject ISnackbar _snackBar
+@inject NavigationManager _navigationServicio;
+
+
+<EditForm Model="@_libro" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+
+                <MudCardContent>
+                    <MudText Align="Align.Left">@titulo</MudText>
+           
+
+                    <MudTextField Label="Titulo" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_libro.Titulo" For="@(() => _libro.Titulo)" />
+
+
+                    <MudTextField Label="Autor" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_libro.Autor" For="@(() => _libro.Autor)" />
+
+
+                    <MudSelect Label="Categoria" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Class="mt-4"
+                               @bind-Value="categoriaSeleccionado">
+                        @if (listaCategoria.Any())
+                        {
+                            foreach (var rol in listaCategoria)
+                            {
+                                <MudSelectItem Value="@rol">@rol.Descripcion</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+
+                    <MudTextField Label="Editorial" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_libro.Editorial" For="@(() => _libro.Editorial)" />
+
+                    <MudTextField Label="Ubicacion" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_libro.Ubicacion" For="@(() => _libro.Ubicacion)" />
+
+                    <MudNumericField Label="Ejemplares" Variant="Variant.Outlined" Class="mt-4"
+                                     @bind-Value="_libro.Ejemplares"  For="@(() => _libro.Ejemplares)" />
+
+                    @if (!bClearInputFile)
+                    {
+                        <InputFile OnChange="UploadLibro" class="form-control mt-4"></InputFile>
+                    }
+                    
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Class="ms-3" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">@boton</MudButton>
+
+                    <MudButton ButtonType="ButtonType.Button" Class="ms-4"
+                               Variant="Variant.Filled"
+                               Color="Color.Warning"
+                               StartIcon="@Icons.Material.Filled.KeyboardBackspace"
+                               OnClick="@(() => _navigationServicio.NavigateTo("/pages/libros"))">Volver</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter]
+    public LibroDTO _libro { get; set; } = new LibroDTO();
+    [Parameter]
+    public int idLibro { get; set; }
+    List<CategoriaDTO> listaCategoria = new List<CategoriaDTO>();
+    public CategoriaDTO categoriaSeleccionado;
+    private string noneCodigo = "d-block";
+    private string titulo = "Nuevo Libro";
+    private string boton = "Guardar";
+    private bool bClearInputFile = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Libro", href: null));
+        _libro.Portada = null;
+
+        if(idLibro != 0)
+        {
+            var response = await _libroServicio.Obtener(idLibro);
+            if (response.status)
+            {
+                _libro = response.value!;
+            }
+
+            titulo = "Editar Libro";
+            boton = "Actualizar";
+        }
+       
+
+        var resultado = await _categoriaServicio.Lista();
+ 
+
+        if (resultado.status)
+        {
+            listaCategoria = resultado.value!;
+            if (idLibro != 0)
+            {
+                categoriaSeleccionado = listaCategoria.FirstOrDefault(p => p.IdCategoria == _libro.IdCategoria)!;
+            }
+            else
+                categoriaSeleccionado = listaCategoria.First();
+        }
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        _libro.IdCategoria = categoriaSeleccionado.IdCategoria;
+
+        if (idLibro != 0)
+        {
+            var response = await _libroServicio.Editar(_libro);
+
+            if (response)
+            {
+                _snackBar.Add("El libro fue actualizado", Severity.Success, a => a.VisibleStateDuration = 600);
+                _navigationServicio.NavigateTo("/pages/libros");
+            }
+
+        }
+        else
+        {
+            var response = await _libroServicio.Crear(_libro);
+
+            if (response.status)
+            {
+                _libro = new LibroDTO();
+                _snackBar.Add("El libro fue registrado", Severity.Success, a => a.VisibleStateDuration = 1000);
+            }
+            else
+            {
+                await Swal.FireAsync("Oops...", "No se pudo registrar!", "error");
+            }
+        }
+
+    }
+
+    private void ClearInputFile()
+    {
+        bClearInputFile = true;
+        StateHasChanged();
+        bClearInputFile = false;
+        StateHasChanged();
+    }
+
+    private async Task UploadLibro(InputFileChangeEventArgs e)
+    {
+        var format = "image/png";
+        var resizedFile = await e.File.RequestImageFileAsync(format, 200, 200);
+        var buffer = new byte[resizedFile.Size];
+
+        await resizedFile.OpenReadStream().ReadAsync(buffer);
+        _libro.Portada = buffer;
+    }
+}

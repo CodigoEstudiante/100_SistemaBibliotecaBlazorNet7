@@ -1,0 +1,179 @@
+﻿@page "/pages/prestamos"
+@using SistemaBiblioteca.Client.Pages.Modales;
+@inject MenuService _menuServicio;
+@inject IPrestamoServicio _prestamoServicio;
+@inject IDialogService _dialogServicio
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
+
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
+        <MudGrid>
+            <MudItem xs="12">
+                <div class="d-flex gap-3">
+                    <MudSelect T="string" Label="Estado Prestamos" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter"
+                               @bind-Value="@estadoPrestamo" Margin="Margin.Dense">
+                        <MudSelectItem Value="@("Todos")" />
+                        <MudSelectItem Value="@("Pendiente")" />
+                        <MudSelectItem Value="@("Devuelto")" />
+                    </MudSelect>
+                    <MudTextField @bind-Value="codigoLector" Label="Codigo Lector" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Search" Color="Color.Info"
+                               AnchorOrigin="Origin.BottomCenter" Size="Size.Small" OnClick="Buscar">Buscar</MudButton>
+                </div>
+            </MudItem>
+
+            <MudItem xs="12">
+
+                <MudTable Items="@_listaPrestamo"
+                          Dense="true"
+                          Striped="true" Bordered="true"
+                          Filter="new Func<PrestamoDTO,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1"
+                          Loading="@_loading" LoadingProgressColor="Color.Info">
+                    <ToolBarContent>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="searchString1" Placeholder="Buscar" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTh>Estado Prestamo</MudTh>
+                        <MudTh>Codigo Prestamo</MudTh>
+                        <MudTh>Codigo Lector</MudTh>
+                        <MudTh>Lector</MudTh>
+                        <MudTh>Libro</MudTh>
+                        <MudTh>Fecha Devolucion</MudTh>
+                        <MudTh>Fecha Confirmacion Devolucion</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="prestamoRow">
+                        <MudTd DataLabel="Estado Prestamo">
+                            @if(prestamoRow.IdEstadoPrestamoNavigation!.IdEstadoPrestamo == 1)
+                            {
+                                <MudChip Color="Color.Error" Size="Size.Small">@prestamoRow.IdEstadoPrestamoNavigation.Descripcion</MudChip>
+                            }
+                            else
+                            {
+                                <MudChip Color="Color.Success" Size="Size.Small">@prestamoRow.IdEstadoPrestamoNavigation.Descripcion</MudChip>
+                            }
+                            
+                        </MudTd>
+                        <MudTd DataLabel="Codigo Prestamo">@prestamoRow.Codigo</MudTd>
+                        <MudTd DataLabel="Codigo Lector">@prestamoRow.IdLectorNavigation.Codigo</MudTd>
+                        <MudTd DataLabel="Lector">@(prestamoRow.IdLectorNavigation.Nombre + " " + prestamoRow.IdLectorNavigation.Apellido)</MudTd>
+                            <MudTd DataLabel="Libro">@prestamoRow.IdLibroNavigation.Titulo</MudTd>
+                            <MudTd DataLabel="Fecha Devolucion">@prestamoRow.FechaDevolucion.Value.ToString("dd/MM/yyyy")</MudTd>
+                            <MudTd DataLabel="Fecha Confirmacion Devolucion">@(prestamoRow.FechaConfirmacionDevolucion == null ? "" : prestamoRow.FechaConfirmacionDevolucion.Value.ToString("dd/MM/yyyy"))</MudTd>
+                        <MudTd DataLabel="">
+                            @if (prestamoRow.IdEstadoPrestamoNavigation!.IdEstadoPrestamo == 1)
+                            {
+                                <MudFab Color="Color.Info"
+                                    StartIcon="@Icons.Material.Filled.Sync"
+                                    Size="Size.Small"
+                                    IconSize="Size.Small"
+                                    OnClick="@(() => VerDetalle(prestamoRow))" />
+                            }
+                            else
+                            {
+                                <MudFab Color="Color.Secondary"
+                                    StartIcon="@Icons.Material.Filled.Visibility"
+                                    Size="Size.Small"
+                                    IconSize="Size.Small" 
+                                    OnClick="@(() => VerDetalle(prestamoRow))" />
+                            }
+                        
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+
+
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+</MudContainer>
+@code {
+    List<PrestamoDTO> _listaPrestamo = new List<PrestamoDTO>();
+    private string searchString1 = "";
+    private PrestamoDTO selectedItem1 = null;
+    private bool _loading = true;
+    string codigoLector = "";
+    string estadoPrestamo = "Todos";
+
+
+    private async Task ObtenerPrestamos()
+    {
+        var result = await _prestamoServicio.Lista();
+
+        if (result.status)
+        {
+            _listaPrestamo = (List<PrestamoDTO>)result.value!;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Historial Prestamos", href: null));
+        await ObtenerPrestamos();
+        _loading = false;
+    }
+
+    private bool FilterFunc1(PrestamoDTO element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(PrestamoDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+
+        if (element.IdEstadoPrestamoNavigation.Descripcion.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.Codigo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.IdLectorNavigation.Codigo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (string.Concat(element.IdLectorNavigation.Nombre, element.IdLectorNavigation.Apellido)
+        .Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.IdLibroNavigation.Titulo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task Buscar()
+    {
+        _loading = true;
+        var result = await _prestamoServicio.Buscar(estadoPrestamo.ToLower(),codigoLector == "" ? "na":codigoLector);
+        if (result.status)
+        {
+            _listaPrestamo = (List<PrestamoDTO>)result.value!;
+        }
+        _loading = false;
+    }
+
+    private async Task VerDetalle(PrestamoDTO modelo)
+    {
+        var parametros = new DialogParameters { ["_prestamo"] = modelo };
+        string titulo = "";
+
+        if (modelo.IdEstadoPrestamoNavigation!.IdEstadoPrestamo == 1)
+            titulo = "Devolver libro";
+        else
+            titulo = "Detalle Devolución";
+
+
+        var dialogo = _dialogServicio.Show<DetallePrestamo>(titulo, parametros);
+        var resultado = await dialogo.Result;
+        if (!resultado.Canceled)
+        {
+            _loading = true;
+            await ObtenerPrestamos();
+            _loading = false;
+        }
+
+
+        
+    }
+}

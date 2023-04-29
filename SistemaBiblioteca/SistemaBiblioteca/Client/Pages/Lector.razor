@@ -1,0 +1,113 @@
+﻿@page "/pages/lector"
+@page "/pages/lector/{idLector:int}"
+@inject MenuService _menuServicio;
+@inject SweetAlertService Swal;
+@inject ISnackbar _snackBar
+@inject NavigationManager _navigationServicio;
+
+@inject ILectorServicio _lectorServicio;
+
+<EditForm Model="@_lector" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+               
+                <MudCardContent>
+                    <MudText Align="Align.Left" >@titulo</MudText>
+                    <MudTextField Label="Codigo" ReadOnly="true" Variant="Variant.Outlined" Class="@("mt-4 " + noneCodigo)"
+                                  @bind-Value="_lector.Codigo" />
+                    
+                    <MudTextField Label="Nombre" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_lector.Nombre" For="@(() => _lector.Nombre)" />
+
+                    <MudTextField Label="Apellido"  Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_lector.Apellido" For="@(() => _lector.Apellido)" />
+
+                    <MudTextField Label="Correo" Variant="Variant.Outlined" Class="mt-4"
+                                  @bind-Value="_lector.Correo" For="@(() => _lector.Correo)" />
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Class="ms-3" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">@boton</MudButton>
+                    
+                    <MudButton ButtonType="ButtonType.Button" Class="ms-4"
+                    Variant="Variant.Filled" 
+                    Color="Color.Warning"
+                               StartIcon="@Icons.Material.Filled.KeyboardBackspace"
+                               OnClick="@(() => _navigationServicio.NavigateTo("/pages/lectores"))">Volver</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter]
+    public LectorDTO _lector { get; set; } = new LectorDTO();
+    [Parameter]
+    public int idLector { get; set; }
+    private string noneCodigo = "d-block";
+    private string titulo = "Nuevo Lector";
+    private string boton = "Guardar";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Lector", href: null));
+
+
+        if (idLector != 0)
+        {
+            var resultado = await _lectorServicio.Obtener(idLector);
+            if (resultado.status)
+                _lector = resultado.value!;
+
+            titulo = "Editar Lector";
+            boton = "Actualizar";
+
+            noneCodigo = "d-block";
+        }
+        else
+        {
+            noneCodigo = "d-none";
+        }
+
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+
+        if(idLector != 0)
+        {
+            var response = await _lectorServicio.Editar(_lector);
+
+            if (response)
+            {
+                _snackBar.Add("El lector fue actualizado", Severity.Success, a => a.VisibleStateDuration = 600);
+                _navigationServicio.NavigateTo("/pages/lectores");
+            }
+
+        }
+        else
+        {
+            var response = await _lectorServicio.Crear(_lector);
+
+            if (response.status)
+            {
+                LectorDTO lectordto = (LectorDTO)response.value!;
+                _lector = new LectorDTO();
+                await Swal.FireAsync("Lector registrado",$"Codigo Lector: {lectordto.Codigo}", "success");
+            }
+            else
+            {
+                await Swal.FireAsync("Oops...", "No se pudo registrar!", "error");
+            }
+        }
+
+        
+    }
+}

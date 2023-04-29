@@ -1,0 +1,89 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = browser
+build_property.RootNamespace = SistemaBiblioteca.Client
+build_property.RootNamespace = SistemaBiblioteca.Client
+build_property.ProjectDir = E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SUBIR\SistemaBiblioteca\SistemaBiblioteca\Client\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SUBIR\SistemaBiblioteca\SistemaBiblioteca\Client
+build_property._RazorSourceGeneratorDebug = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Autenticacion/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0ZW50aWNhY2lvblxMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/DashBoard.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaEJvYXJkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Lector.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGVjdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Lectores.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGVjdG9yZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Libro.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlicm8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Libros.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlicm9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Modales/DetallePrestamo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kYWxlc1xEZXRhbGxlUHJlc3RhbW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Modales/LstLibros.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kYWxlc1xMc3RMaWJyb3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Modales/MdUsuario.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW9kYWxlc1xNZFVzdWFyaW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Prestamos.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJlc3RhbW9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/RegistrarPrestamo.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVnaXN0cmFyUHJlc3RhbW8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Pages/Usuarios.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXN1YXJpb3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Shared/LoginLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvZ2luTGF5b3V0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-rimkme4r5b
+
+[E:/WorkSpaceAD/YOUTUBE/100_SISTEMA BIBLIOTECA BLAZOR NET 7/SUBIR/SistemaBiblioteca/SistemaBiblioteca/Client/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-a8anqqystu

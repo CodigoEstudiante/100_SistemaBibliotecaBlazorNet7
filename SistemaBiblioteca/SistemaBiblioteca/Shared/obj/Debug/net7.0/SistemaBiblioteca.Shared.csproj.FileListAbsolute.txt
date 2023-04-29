@@ -1,0 +1,12 @@
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\bin\Debug\net7.0\SistemaBiblioteca.Shared.deps.json
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\bin\Debug\net7.0\SistemaBiblioteca.Shared.dll
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\bin\Debug\net7.0\SistemaBiblioteca.Shared.pdb
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.csproj.AssemblyReference.cache
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.AssemblyInfoInputs.cache
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.AssemblyInfo.cs
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.csproj.CoreCompileInputs.cache
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.dll
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\refint\SistemaBiblioteca.Shared.dll
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\SistemaBiblioteca.Shared.pdb
+E:\WorkSpaceAD\YOUTUBE\100_SISTEMA BIBLIOTECA BLAZOR NET 7\SistemaBiblioteca\SistemaBiblioteca\Shared\obj\Debug\net7.0\ref\SistemaBiblioteca.Shared.dll

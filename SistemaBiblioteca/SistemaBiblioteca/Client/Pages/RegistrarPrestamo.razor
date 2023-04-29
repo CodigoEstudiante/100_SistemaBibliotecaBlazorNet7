@@ -1,0 +1,176 @@
+﻿@page "/pages/registrarPrestamo"
+@using SistemaBiblioteca.Client.Pages.Modales;
+@inject MenuService _menuServicio;
+@inject ILectorServicio _lectorServicio;
+@inject IDialogService _dialogServicio
+@inject IPrestamoServicio _prestamoServicio;
+@inject ISnackbar _snackBar
+@inject SweetAlertService Swal;
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
+
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
+        <MudGrid>
+
+            <MudItem xs="12" >
+
+                <MudCard Class="mb-4" Outlined="true">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Detalle del lector</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudAutocomplete T="LectorDTO" Label="Buscar lector" @bind-Value="_lector" SearchFunc="@BuscarLector"
+                                         ResetValueOnEmptyText="true"
+                                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                                         Variant="Variant.Outlined" Margin="Margin.Dense"
+                                         ToStringFunc="@(e => e == null ? null : $"{e.Codigo} - {e.Nombre} {e.Apellido}")" />
+                    </MudCardContent>
+                </MudCard>
+
+
+                <MudCard Outlined="true">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Detalle del préstamo</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+
+                        <MudGrid Spacing="1">
+                            <MudItem sm="12" xs="9" lg="9">
+                                <MudTextField @bind-Value="_libro.Titulo" Margin="Margin.Dense"
+                                              Label="Libro" Variant="Variant.Outlined" ReadOnly="true"></MudTextField>
+                            </MudItem>
+
+                            <MudItem sm="12" xs="3" lg="3">
+                                <MudButton Variant="Variant.Filled"  Class="mt-1"
+                                           StartIcon="@Icons.Material.Filled.Search" Color="Color.Info" FullWidth="true"
+                                           OnClick="BuscarLibro">Buscar</MudButton>
+                            </MudItem>
+                            
+                            <MudItem sm="12" xs="12" lg="12" Class="mt-4">
+                                <MudDatePicker Label="Fecha Devolucion" Margin="Margin.Dense" Variant="Variant.Outlined" DateFormat="dd/MM/yyyy" @bind-Date="fechaDevolucion" />
+                            </MudItem>
+
+                             <MudItem sm="12" xs="12" lg="12" Class="mt-4">
+                                <MudTextField @bind-Value="estadoLibro" Margin="Margin.Dense"
+                                              Label="Estado del libro" Variant="Variant.Outlined" ></MudTextField>
+                             </MudItem>
+
+                             <MudItem sm="12" xs="12" lg="12" Class="mt-4">
+                                <div class="d-flex justify-content-center flex-grow-1 flex-wrap justify-center align-center">
+
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Registrar">Registrar</MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Limpiar" Class="ms-4">Limpiar</MudButton>
+
+                                 </div>
+                             </MudItem>
+
+                        </MudGrid>
+
+                    </MudCardContent>
+                </MudCard>
+
+             </MudItem>
+         </MudGrid>
+     </MudPaper>
+</MudContainer>
+
+
+
+@code {
+
+    DateTime? fechaDevolucion = DateTime.Today;
+    private PrestamoDTO _prestamo;
+    private LectorDTO _lector;
+    private LibroDTO _libro = new LibroDTO();
+    private string estadoLibro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _menuServicio.SetMenu(new BreadcrumbItem("Registrar Prestamo", href: null));
+    }
+
+    private async Task BuscarLibro()
+    {
+        DialogOptions maxWidth = new DialogOptions() { Position = DialogPosition.TopCenter };
+        var dialogo = _dialogServicio.Show<LstLibros>("",maxWidth);
+        var resultado = await dialogo.Result;
+
+        if (!resultado.Canceled)
+        {
+            _libro = (LibroDTO)resultado.Data;
+        }
+    }
+
+    private async Task<IEnumerable<LectorDTO>> BuscarLector(string valor)
+    {
+
+        var response = await _lectorServicio.Lista();
+
+        if (response.status)
+        {
+            if (string.IsNullOrEmpty(valor))
+                return new List<LectorDTO>();
+
+            List<LectorDTO> lista = (List<LectorDTO>)response.value!;
+            return lista.FindAll(p => string.Concat(p.Codigo,p.Nombre,p.Apellido).Contains(valor, StringComparison.InvariantCultureIgnoreCase));
+        }
+        else
+        {
+            return new List<LectorDTO>();
+        }
+    }
+
+    private async Task Limpiar()
+    {
+        estadoLibro = "";
+        _lector = null;
+        _libro = new LibroDTO();
+        fechaDevolucion = DateTime.Today;
+    }
+
+    private async Task Registrar()
+    {
+        if (_lector == null)
+        {
+            await Swal.FireAsync("Oops...", "Debe selecionar el lector!", "error");
+            return;
+        }
+
+        if (_libro.IdLibro == 0)
+        {
+            await Swal.FireAsync("Oops...", "Debe selecionar el libro!", "error");
+            return;
+        }
+
+
+        _prestamo = new PrestamoDTO();
+        _prestamo.IdEstadoPrestamo = 1;
+        _prestamo.IdLector = _lector.IdLector;
+        _prestamo.IdLibro = _libro.IdLibro;
+        _prestamo.FechaDevolucion = fechaDevolucion;
+        _prestamo.EstadoEntregado = estadoLibro;
+
+        var response = await _prestamoServicio.Crear(_prestamo);
+
+        if (response.status)
+        {
+            PrestamoDTO prestamoDTO = (PrestamoDTO)response.value!;
+            _prestamo = null;
+            _lector = null;
+            _libro = new LibroDTO();
+            estadoLibro = "";
+            fechaDevolucion = DateTime.Today;
+
+            await Swal.FireAsync("Prestamo registrado", $"Codigo prestamos: {prestamoDTO.Codigo}", "success");
+        }
+        else
+        {
+            await Swal.FireAsync("Oops...", "No se pudo registrar!", "error");
+        }
+
+    }
+}
